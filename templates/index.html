@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <title>Swiss Pairing Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container py-4">
+    <h1>Swiss Pairing Manager</h1>
+    <div class="row">
+      <div class="col-md-5">
+        <h4>Players</h4>
+        <form method="post" action="{{ url_for('add_player') }}" class="mb-3">
+          <div class="mb-2"><input name="name" placeholder="Name" required class="form-control"></div>
+          <div class="mb-2"><input name="team" placeholder="Team (optional)" class="form-control"></div>
+          <div class="mb-2"><input name="rating" placeholder="Rating (optional)" type="number" class="form-control"></div>
+          <button class="btn btn-primary btn-sm">Add Player</button>
+        </form>
+
+        <table class="table table-sm">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Team</th><th>Rating</th></tr>
+        </thead>
+        <tbody>
+            {% if players|length == 0 %}
+            <tr>
+                <td colspan="4" class="text-center text-muted py-3">
+                <em>No players added yet.</em><br>
+                <small>Add players using the form above.</small>
+                </td>
+            </tr>
+            {% else %}
+            {% for p in players %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.team }}</td>
+                <td>{{ p.rating }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+        </table>
+
+      </div>
+
+      <div class="col-md-7">
+        <h4>Controls</h4>
+        <form method="post" action="{{ url_for('start_round') }}" class="mb-2">
+          <button class="btn btn-success">Start Next Round (generate pairings)</button>
+        </form>
+
+        <a href="{{ url_for('standings') }}" class="btn btn-info">View Standings</a>
+        <a href="{{ url_for('rounds') }}" class="btn btn-secondary">View Rounds / Matches</a>
+
+        <form method="post" action="{{ url_for('reset') }}" style="display:inline-block" onsubmit="return confirm('Reset DB?')">
+          <button class="btn btn-danger">Reset / Clear All</button>
+        </form>
+
+        <hr>
+        <h5>Notes</h5>
+        <ul>
+          <li>Pairings avoid repeat opponents and players from same team (if possible).</li>
+          <li>If odd number, a bye is assigned to a player who hasn't had a bye and has lower score.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

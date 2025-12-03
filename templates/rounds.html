@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+  <title>Rounds & Matches</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container py-4">
+    <a href="{{ url_for('index') }}" class="btn btn-link">&larr; Back</a>
+    <h2>Rounds & Matches</h2>
+
+    {% for r in rounds %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5>Round {{ r.number }}</h5>
+        <table class="table table-sm">
+          <thead><tr><th>#</th><th>Player 1</th><th>Player 2</th><th>Score</th><th>Action</th></tr></thead>
+          <tbody>
+            {% for m in matches[r.id] %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ m.p1.name }} ({{ m.p1.team }})</td>
+              <td>{% if m.p2 %}{{ m.p2.name }} ({{ m.p2.team }}){% else %}<em>Bye</em>{% endif %}</td>
+              <td>
+                {% if m.finished %}
+                  {{ m.p1_score }} - {{ m.p2_score }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>
+                {% if not m.finished %}
+                  <form method="post" action="{{ url_for('report_result', match_id=m.id) }}">
+                    {% if m.p2 %}
+                      <div class="input-group input-group-sm">
+                        <input name="p1_score" type="number" step="0.5" min="0" max="1" class="form-control" placeholder="p1 score" required>
+                        <input name="p2_score" type="number" step="0.5" min="0" max="1" class="form-control" placeholder="p2 score" required>
+                        <button class="btn btn-primary btn-sm">Save</button>
+                      </div>
+                    {% else %}
+                      <!-- Bye -->
+                      <input type="hidden" name="p1_score" value="1.0">
+                      <button class="btn btn-primary btn-sm">Give Bye (1.0)</button>
+                    {% endif %}
+                  </form>
+                {% else %}
+                  <small class="text-muted">done</small>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+</body>
+</html>
