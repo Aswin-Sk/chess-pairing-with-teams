@@ -29,22 +29,45 @@
                 {% endif %}
               </td>
               <td>
-                {% if not m.finished %}
-                  <form method="post" action="{{ url_for('report_result', match_id=m.id) }}">
-                    {% if m.p2 %}
-                      <div class="input-group input-group-sm">
-                        <input name="p1_score" type="number" step="0.5" min="0" max="1" class="form-control" placeholder="p1 score" required>
-                        <input name="p2_score" type="number" step="0.5" min="0" max="1" class="form-control" placeholder="p2 score" required>
-                        <button class="btn btn-primary btn-sm">Save</button>
-                      </div>
-                    {% else %}
-                      <!-- Bye -->
-                      <input type="hidden" name="p1_score" value="1.0">
-                      <button class="btn btn-primary btn-sm">Give Bye (1.0)</button>
-                    {% endif %}
-                  </form>
-                {% else %}
-                  <small class="text-muted">done</small>
+                {% if not m.finished and m.p2_id is not none %}
+                    <form method="post" action="{{ url_for('report_result', match_id=m.id) }}" class="d-inline-flex">
+                        
+                        <select name="result" required class="form-select form-select-sm me-2">
+                            <option value="" disabled selected>Report Result</option>
+                            
+                            <option value="1.0-0.0">Win for {{ m.p1.name }} (1 - 0)</option>
+                            <option value="0.0-1.0">Win for {{ m.p2.name }} (0 - 1)</option>
+                            <option value="0.5-0.5">Draw (0.5 - 0.5)</option>
+                            
+                        </select>
+                        
+                        <button type="submit" class="btn btn-sm btn-success">Report</button>
+                    </form>
+                {% elif m.finished and m.p2_id is not none %}
+                    <form method="post" action="{{ url_for('report_result', match_id=m.id) }}" class="d-inline-flex">
+                        
+                        <select name="result" required class="form-select form-select-sm me-2">
+                            
+                            {% set current_result = m.p1_score|string + '-' + m.p2_score|string %}
+                            
+                            <option value="1.0-0.0" {% if current_result == "1.0-0.0" %}selected{% endif %}>
+                                Win for {{ m.p1.name }} (1.0 - 0.0)
+                            </option>
+                            
+                            <option value="0.0-1.0" {% if current_result == "0.0-1.0" %}selected{% endif %}>
+                                Win for {{ m.p2.name }} (0.0 - 1.0)
+                            </option>
+                            
+                            <option value="0.5-0.5" {% if current_result == "0.5-0.5" %}selected{% endif %}>
+                                Draw (0.5 - 0.5)
+                            </option>
+                            
+                        </select>
+                        
+                        <button type="submit" class="btn btn-sm btn-success">Update</button>
+                    </form>
+                {% elif m.finished and m.p2_id is none %}
+                    {{ m.p1.name }} receives a BYE (1.0)
                 {% endif %}
               </td>
             </tr>
