@@ -7,14 +7,38 @@
 <body>
   <div class="container py-4">
     <h1>Swiss Pairing Manager</h1>
+    <div class="fixed-bottom w-100 bg-light p-3 border-top shadow-lg">
+    <div class="container">
+      <form action="{{ url_for('upload_csv') }}" method="post" enctype="multipart/form-data">
+          <input type="file" name="file" accept=".csv" required>
+          <button type="submit">Upload CSV</button>
+      </form>
+    </div>
+    </div>
+
     <div class="row">
       <div class="col-md-5">
         <h4>Players</h4>
         <form method="post" action="{{ url_for('add_player') }}" class="mb-3">
-          <div class="mb-2"><input name="name" placeholder="Name" required class="form-control"></div>
-          <div class="mb-2"><input name="team" placeholder="Team (optional)" class="form-control"></div>
-          <div class="mb-2"><input name="rating" placeholder="Rating (optional)" type="number" class="form-control"></div>
-          <button class="btn btn-primary btn-sm">Add Player</button>
+            
+            <div class="mb-2">
+                <input name="name" placeholder="Name" required class="form-control">
+            </div>
+            
+            <div class="mb-2">
+                <select name="team" class="form-select" required>
+                    <option value="" disabled selected>Select Team</option>
+                    {% for team_name in teams %}
+                        <option value="{{ team_name }}">{{ team_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-2">
+                <input name="rating" placeholder="Rating (optional)" type="number" class="form-control">
+            </div>
+            
+            <button class="btn btn-primary btn-sm">Add Player</button>
         </form>
 
         <table class="table table-sm">
